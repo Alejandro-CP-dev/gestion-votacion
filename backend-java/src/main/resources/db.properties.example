@@ -1,0 +1,22 @@
+
+# Configuracion de la base de datos del backend SVIS.
+#
+# Copia este archivo a db.properties (sin ".example") y ajusta los valores.
+# db.properties NO se sube a git: cada integrante del equipo tiene el suyo.
+#
+# Las variables de entorno tienen PRIORIDAD sobre estos valores:
+#   SVIS_DB_URL   SVIS_DB_USER   SVIS_DB_PASSWORD   SVIS_DB_POOL   SVIS_API_KEY
+#
+# Asi cada integrante del equipo usa su propia clave de MySQL sin editar
+# este archivo, y sin que la clave de nadie termine en el repositorio.
+
+db.url=jdbc:mysql://localhost:3306/SvisDb?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+db.user=root
+db.password=
+db.poolSize=10
+
+# Clave compartida que el frontend PHP debe enviar en la cabecera X-Svis-Key
+# para los endpoints de administracion (ver ApiKeyFilter). Debe coincidir con
+# la constante API_KEY de frontend-php/config.local.php. Genera la tuya, por
+# ejemplo: openssl rand -base64 24
+api.key=CAMBIA_ESTO_POR_UNA_CLAVE_ALEATORIA

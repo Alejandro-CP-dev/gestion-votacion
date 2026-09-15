@@ -1,0 +1,19 @@
+<?php
+/**
+ * config.local.php.example — Plantilla. Copia este archivo a
+ * config.local.php (sin ".example") y ajusta los valores a tu entorno.
+ * config.local.php NO se sube a git: cada integrante del equipo tiene el
+ * suyo, con su propia ruta y su propia clave.
+ */
+
+// Vacío si el frontend vive en la raíz del sitio; algo como
+// '/gestion-votacion/frontend-php' si vive en un subdirectorio.
+define('BASE_URL', '');
+
+// URL base del backend Java, con el contexto real de tu despliegue en Tomcat.
+define('API_BASE_URL', 'http://localhost:8080/api');
+
+// Debe ser EXACTAMENTE la misma clave que api.key en
+// backend-java/src/main/resources/db.properties. Genera la tuya, por
+// ejemplo: openssl rand -base64 24
+define('API_KEY', 'CAMBIA_ESTO_POR_UNA_CLAVE_ALEATORIA');

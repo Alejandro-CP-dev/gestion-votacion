@@ -1,0 +1,841 @@
+/* =====================================================================
+   SVIS — Componentes
+   Regla única de este archivo: si un estilo aparece dos veces, es una
+   clase. Ninguna página lleva atributos style="".
+   ===================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--fondo);
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  font-size: var(--t-base);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { margin: 0; line-height: 1.2; }
+p { margin: 0; }
+a { color: var(--verde-t); }
+
+/* Foco visible en TODO lo enfocable. No se quita nunca: es la única
+   forma de usar la aplicación sin ratón. */
+:focus-visible {
+  outline: 2px solid var(--verde-t);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+/* Salto al contenido para lectores de pantalla y teclado. */
+.salto {
+  position: absolute; left: -9999px;
+  /* Fijo a propósito, no var(--tinta): en modo oscuro --tinta se aclara
+     para el texto normal, y texto blanco sobre un fondo ya claro sería
+     invisible justo en el elemento pensado para quien navega con teclado. */
+  background: #0F172A; color: #fff;
+  padding: var(--e-3) var(--e-4); border-radius: var(--r-campo);
+}
+.salto:focus { left: var(--e-4); top: var(--e-4); z-index: 100; }
+
+/* ==================== Estructura ==================== */
+
+.barra {
+  background: var(--superficie);
+  border-bottom: 1px solid var(--linea);
+}
+.barra__interior {
+  max-width: var(--ancho-panel);
+  margin: 0 auto;
+  padding: var(--e-3) var(--e-5);
+  display: flex; align-items: center; gap: var(--e-4);
+}
+.barra__marca {
+  font-size: var(--t-sm); color: var(--apagado);
+  text-decoration: none; margin-right: auto;
+}
+.barra__marca b { color: var(--tinta); font-weight: 600; }
+
+.barra__nav { display: flex; gap: var(--e-1); align-items: center; }
+.barra__nav a {
+  font-size: var(--t-sm); font-weight: 500; color: var(--apagado);
+  text-decoration: none; padding: var(--e-2) var(--e-3);
+  border-radius: var(--r-boton);
+  transition: color var(--rapido) ease, background var(--rapido) ease;
+}
+.barra__nav a:hover { color: var(--tinta); background: var(--fondo); }
+.barra__nav a[aria-current="page"] { color: var(--tinta); font-weight: 600; background: var(--verde-suave); }
+
+.sesion {
+  display: inline-flex; align-items: center; gap: var(--e-2);
+  background: var(--verde-suave); color: var(--verde-t);
+  padding: var(--e-1) var(--e-3);
+  border-radius: var(--r-pastilla);
+  font-size: var(--t-xxs); font-weight: 600;
+}
+.sesion::before {
+  content: ""; width: 6px; height: 6px;
+  border-radius: 50%; background: var(--verde);
+}
+
+.contenido { padding: var(--e-6) var(--e-4) var(--e-8); }
+.contenido--panel { max-width: var(--ancho-panel); margin: 0 auto; }
+
+/* La hoja: superficie principal del estudiante. */
+.hoja {
+  max-width: var(--ancho-hoja); margin: 0 auto;
+  background: var(--superficie);
+  border: 1px solid var(--linea);
+  border-radius: var(--r-hoja);
+  box-shadow: var(--e-media);
+  overflow: hidden;
+}
+.hoja--angosta { max-width: 440px; }
+.hoja__cuerpo { padding: var(--e-5); }
+
+.encabezado { padding: var(--e-5) var(--e-5) 0; }
+.encabezado h1 {
+  font-family: var(--fuente-titulo); font-weight: 600;
+  font-size: var(--t-xl); letter-spacing: -.01em;
+  margin-bottom: var(--e-2);
+}
+.encabezado p { color: var(--apagado); font-size: var(--t-sm); max-width: var(--linea-texto); }
+
+.titulo-panel {
+  font-family: var(--fuente-titulo); font-weight: 600;
+  font-size: var(--t-lg); margin-bottom: var(--e-5);
+}
+
+/* ==================== Progreso ==================== */
+
+.progreso { display: flex; gap: var(--e-2); padding: var(--e-5) var(--e-5) 0; }
+.progreso__tramo { flex: 1; }
+.progreso__via {
+  height: 3px; border-radius: 2px;
+  background: var(--linea); overflow: hidden;
+}
+.progreso__via span {
+  display: block; height: 100%; width: 0;
+  background: var(--verde);
+  transition: width .5s var(--curva);
+}
+.progreso__tramo.es-activo .progreso__via span,
+.progreso__tramo.es-hecho .progreso__via span { width: 100%; }
+.progreso__tramo small {
+  display: block; margin-top: 7px;
+  font-size: var(--t-xxs); font-weight: 500; color: var(--apagado);
+}
+.progreso__tramo.es-activo small { color: var(--tinta); font-weight: 600; }
+
+.paso { display: none; padding: var(--e-5); }
+.paso.es-visible { display: block; animation: entra var(--lento) var(--curva); }
+@keyframes entra {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ==================== Formulario ==================== */
+
+fieldset { border: 0; margin: 0; padding: 0; }
+legend { font-size: var(--t-base); font-weight: 600; padding: 0 0 var(--e-3); }
+
+.campo { margin-bottom: var(--e-4); }
+.campo__rotulo {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: var(--e-2);
+}
+.campo__rotulo label { font-size: var(--t-base); font-weight: 600; }
+.campo__rotulo span { font-size: var(--t-xs); color: var(--apagado); }
+
+/* Etiqueta visible siempre, nunca solo placeholder: el placeholder
+   desaparece al escribir y la persona pierde la referencia. */
+.campo > label { display: block; font-weight: 600; margin-bottom: var(--e-2); }
+
+.entrada {
+  width: 100%; padding: var(--e-3) var(--e-4);
+  font-family: inherit; font-size: var(--t-base); color: var(--tinta);
+  background: var(--superficie);
+  border: 1.5px solid var(--linea); border-radius: var(--r-campo);
+  min-height: 48px;
+  transition: border-color var(--rapido) ease, box-shadow var(--rapido) ease;
+}
+.entrada:focus {
+  outline: none; border-color: var(--verde-t);
+  box-shadow: 0 0 0 3px rgba(42, 125, 0, .14);
+}
+.entrada[aria-invalid="true"] { border-color: var(--granate); }
+
+.pista { font-size: var(--t-xs); color: var(--apagado); margin-top: var(--e-2); }
+.pista.es-error { color: var(--granate); font-weight: 500; }
+
+/* ==================== Opción de papeleta ==================== */
+
+.opcion {
+  position: relative; display: flex; gap: var(--e-4); align-items: flex-start;
+  padding: var(--e-4) var(--e-4) var(--e-4) 19px;
+  margin-bottom: var(--e-2);
+  background: var(--superficie);
+  border: 1.5px solid var(--linea); border-radius: var(--r-fila);
+  cursor: pointer; min-height: 48px;
+  transition: border-color var(--normal) ease, background var(--normal) ease,
+              transform var(--normal) var(--curva), box-shadow var(--normal) ease;
+}
+.opcion::before {
+  content: ""; position: absolute; left: 0; top: var(--e-4); bottom: var(--e-4);
+  width: 3px; background: var(--verde); border-radius: 0 3px 3px 0;
+  transform: scaleY(0); transform-origin: center;
+  transition: transform var(--normal) var(--curva);
+}
+.opcion:hover { border-color: var(--linea-fuerte); transform: translateY(-1px); box-shadow: var(--e-baja); }
+.opcion:has(input:checked) { border-color: var(--verde); background: var(--verde-suave); }
+.opcion:has(input:checked)::before { transform: scaleY(1); }
+.opcion:has(input:focus-visible) { outline: 2px solid var(--verde-t); outline-offset: 2px; }
+.opcion input { position: absolute; opacity: 0; pointer-events: none; }
+
+.marca {
+  flex: none; width: 22px; height: 22px; margin-top: 2px;
+  border: 2px solid var(--linea-fuerte); border-radius: 50%;
+  display: grid; place-items: center;
+  transition: border-color var(--normal) ease;
+}
+.marca::after {
+  content: ""; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--verde); transform: scale(0);
+  transition: transform var(--normal) var(--curva);
+}
+.opcion:has(input:checked) .marca { border-color: var(--verde); }
+.opcion:has(input:checked) .marca::after { transform: scale(1); }
+
+.opcion__texto { font-weight: 600; font-size: var(--t-md); display: block; }
+.opcion__nota  { font-size: var(--t-xs); color: var(--apagado); display: block; margin-top: 1px; }
+
+/* ==================== Token segmentado ==================== */
+
+.token { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.token__sep { color: var(--linea); font-weight: 700; padding: 0 2px; }
+.token input {
+  width: 38px; height: 52px; text-align: center;
+  font-family: var(--fuente-mono); font-size: 20px; font-weight: 500;
+  color: var(--tinta); text-transform: uppercase;
+  background: var(--superficie);
+  border: 1.5px solid var(--linea); border-radius: var(--r-campo);
+  transition: border-color .15s ease, box-shadow .15s ease, transform .15s var(--curva);
+}
+.token input:focus {
+  outline: none; border-color: var(--verde-t);
+  box-shadow: 0 0 0 3px rgba(42, 125, 0, .14);
+  transform: translateY(-1px);
+}
+.token input.es-lleno { border-color: var(--verde-borde-suave); background: var(--verde-suave); }
+.token.es-error input { border-color: var(--granate); }
+.token.es-error { animation: sacude .3s; }
+@keyframes sacude {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* ==================== Avisos ==================== */
+
+.aviso {
+  display: flex; gap: var(--e-3);
+  padding: var(--e-4);
+  background: var(--verde-suave);
+  border: 1px solid var(--linea); border-left: 3px solid var(--verde);
+  border-radius: var(--r-campo);
+  font-size: var(--t-sm);
+  margin-bottom: var(--e-4);
+}
+.aviso svg { flex: none; margin-top: 2px; }
+.aviso b { font-weight: 600; }
+.aviso--alerta { border-left-color: var(--ambar); background: var(--ambar-suave); }
+/* Aviso a nivel de página, sobre la hoja. Existe como clase y no como
+   style="" en la cabecera: si un estilo aparece en una plantilla, es una clase. */
+.aviso--pagina { max-width: var(--ancho-hoja); margin: 0 auto var(--e-4); }
+.aviso--error  { border-left-color: var(--granate); background: var(--granate-suave); }
+
+/* ==================== Insignias ==================== */
+
+.insignia {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px var(--e-3); border-radius: var(--r-pastilla);
+  font-size: var(--t-xxs); font-weight: 600;
+  border: 1px solid transparent;
+}
+/* Cada estado lleva color Y texto. El color nunca es la única señal:
+   uno de cada doce hombres no distingue el verde del rojo. */
+.insignia--abierta { background: var(--verde-suave); color: var(--verde-t); }
+.insignia--cerrada { background: var(--fondo); color: var(--apagado); border-color: var(--linea); }
+.insignia--creada  { background: var(--ambar-suave); color: var(--ambar); }
+.insignia--votada  { background: var(--fondo); color: var(--apagado); border-color: var(--linea); }
+
+/* ==================== Botones ==================== */
+
+.boton {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--e-2);
+  font-family: inherit; font-size: 15px; font-weight: 600;
+  padding: var(--e-3) var(--e-5); min-height: 48px;
+  border: 1.5px solid transparent; border-radius: var(--r-boton);
+  cursor: pointer; text-decoration: none;
+  transition: background var(--rapido) ease, border-color var(--rapido) ease,
+              transform .12s var(--curva), box-shadow var(--rapido) ease;
+}
+.boton:active { transform: translateY(1px); }
+
+.boton--principal { background: var(--verde-boton); color: #fff; box-shadow: var(--e-baja); }
+.boton--principal:hover:not(:disabled) { background: var(--verde-hover); box-shadow: var(--e-media); }
+
+/* Granate SOLO aquí: la acción que no se puede deshacer. */
+.boton--grave { background: var(--granate-boton); color: #fff; box-shadow: var(--e-baja); }
+.boton--grave:hover:not(:disabled) { background: var(--granate-hover); }
+
+.boton--plano { background: transparent; color: var(--tinta); border-color: var(--linea); }
+.boton--plano:hover { border-color: var(--linea-fuerte); background: var(--verde-suave); }
+
+.boton--texto {
+  background: none; border: 0; color: var(--verde-t);
+  padding: var(--e-3) var(--e-2); min-height: auto;
+}
+.boton--texto:hover { text-decoration: underline; }
+
+.boton:disabled {
+  background: var(--linea); color: var(--deshabilitado);
+  cursor: not-allowed; box-shadow: none;
+}
+
+/* .boton fija su propio display, así que gana sobre la regla [hidden] del
+   user-agent y el atributo deja de esconder nada sin esto. */
+.boton[hidden] { display: none; }
+
+/* ---------- Interruptor de tema ---------- */
+.boton-tema {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; flex: none; padding: 0;
+  background: transparent; border: 1px solid var(--linea); border-radius: var(--r-boton);
+  color: var(--apagado); cursor: pointer;
+  transition: background var(--rapido) ease, border-color var(--rapido) ease, color var(--rapido) ease;
+}
+.boton-tema:hover { border-color: var(--linea-fuerte); color: var(--tinta); background: var(--verde-suave); }
+.boton-tema svg { display: block; }
+
+/* Cuál de los dos íconos se ve es puro CSS: sin esto no habría forma de
+   saber el tema en el primer pintado sin esperar a app.js.
+   Ojo con la especificidad: ".boton-tema svg" (clase + tipo) le ganaría a
+   ".boton-tema__luna" sola (una clase), así que aquí siempre hay que
+   calificarlas con ".boton-tema" delante. */
+.boton-tema .boton-tema__luna { display: none; }
+:root[data-tema="oscuro"] .boton-tema .boton-tema__sol  { display: none; }
+:root[data-tema="oscuro"] .boton-tema .boton-tema__luna { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) .boton-tema .boton-tema__sol  { display: none; }
+  :root:not([data-tema="claro"]) .boton-tema .boton-tema__luna { display: block; }
+}
+
+.boton__rueda {
+  display: none; width: 15px; height: 15px;
+  border: 2px solid rgba(255, 255, 255, .35); border-top-color: #fff;
+  border-radius: 50%; animation: gira .7s linear infinite;
+}
+.boton.es-cargando .boton__rueda { display: block; }
+.boton.es-cargando { pointer-events: none; opacity: .85; }
+@keyframes gira { to { transform: rotate(360deg); } }
+
+.acciones { display: flex; gap: var(--e-3); align-items: center; margin-top: var(--e-5); }
+.acciones--centro { justify-content: center; }
+
+/* ==================== Resumen ==================== */
+
+.resumen { border: 1px solid var(--linea); border-radius: var(--r-fila); overflow: hidden; }
+.resumen__fila {
+  display: flex; justify-content: space-between; gap: var(--e-4); align-items: center;
+  padding: var(--e-3) var(--e-4);
+  border-bottom: 1px solid var(--linea);
+}
+.resumen__fila:last-child { border-bottom: 0; }
+.resumen dt { font-size: var(--t-xs); color: var(--apagado); margin: 0; }
+.resumen dd { margin: 0; font-weight: 600; text-align: right; }
+.resumen dd.es-mono { font-family: var(--fuente-mono); letter-spacing: .08em; font-weight: 500; }
+
+/* ==================== Modal ==================== */
+
+.telon {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(14, 42, 34, .45);
+  display: none; place-items: center; padding: var(--e-5);
+  animation: aparece .2s ease;
+}
+.telon.es-visible { display: grid; }
+@keyframes aparece { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  width: 100%; max-width: 430px; padding: var(--e-5);
+  background: var(--superficie); border-radius: var(--r-hoja);
+  box-shadow: var(--e-alta);
+  animation: sube var(--lento) var(--curva);
+}
+@keyframes sube {
+  from { opacity: 0; transform: translateY(24px) scale(.97); }
+  to   { opacity: 1; transform: none; }
+}
+.modal h2 { font-family: var(--fuente-titulo); font-size: var(--t-lg); margin-bottom: var(--e-1); }
+.modal__elegida {
+  font-size: 19px; font-weight: 600;
+  padding: var(--e-3) var(--e-4); margin: var(--e-3) 0;
+  background: var(--verde-suave); border-radius: var(--r-campo);
+}
+
+/* ==================== Comprobante ==================== */
+
+.centrado { text-align: center; }
+.centrado h1 { font-family: var(--fuente-titulo); font-size: 26px; margin-bottom: var(--e-2); }
+.centrado p { color: var(--apagado); font-size: 15px; margin: 0 auto; max-width: 44ch; }
+
+/* La única animación de toda la aplicación, en el único momento que la
+   merece: la confirmación de que el voto quedó registrado. */
+.sello { width: 76px; height: 76px; margin: 0 auto var(--e-4); display: block; }
+.sello circle {
+  fill: none; stroke: var(--verde); stroke-width: 2.5;
+  stroke-dasharray: 226; stroke-dashoffset: 226;
+  animation: traza .7s var(--curva) forwards;
+}
+.sello path {
+  fill: none; stroke: var(--verde); stroke-width: 3;
+  stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 40; stroke-dashoffset: 40;
+  animation: traza .4s var(--curva) .55s forwards;
+}
+@keyframes traza { to { stroke-dashoffset: 0; } }
+
+.codigo[hidden] { display: none; }
+.codigo {
+  display: flex; gap: var(--e-3); align-items: center; justify-content: space-between;
+  padding: var(--e-3) var(--e-4); margin: var(--e-4) 0;
+  background: var(--fondo);
+  border: 1px solid var(--linea); border-radius: var(--r-campo);
+}
+.codigo code {
+  font-family: var(--fuente-mono); font-size: var(--t-xs);
+  letter-spacing: .06em; word-break: break-all; line-height: 1.7; text-align: left;
+}
+.copiar {
+  flex: none; padding: 9px var(--e-4);
+  font-family: inherit; font-size: var(--t-xs); font-weight: 600;
+  background: var(--superficie);
+  border: 1.5px solid var(--linea); border-radius: 7px;
+  cursor: pointer; transition: all var(--rapido) ease;
+}
+.copiar:hover { border-color: var(--verde-t); color: var(--verde-t); }
+.copiar.es-listo { background: var(--verde-suave); border-color: var(--verde); color: var(--verde-t); }
+
+.escudo {
+  width: 64px; height: 64px; margin: 0 auto var(--e-4);
+  border-radius: 50%; display: grid; place-items: center;
+  background: var(--ambar-suave); color: var(--ambar);
+}
+
+/* ==================== Tabla del panel ==================== */
+
+/* Reglas horizontales, sin bordes verticales y sin filas alternadas.
+   La cuadrícula completa compite con los datos por la atención. */
+.tabla { width: 100%; border-collapse: collapse; }
+.tabla th {
+  text-align: left; font-size: var(--t-xs); font-weight: 600; color: var(--apagado);
+  padding: var(--e-3) var(--e-3); border-bottom: 1px solid var(--linea);
+}
+.tabla td {
+  padding: var(--e-4) var(--e-3);
+  border-bottom: 1px solid var(--linea); font-size: var(--t-sm);
+}
+.tabla tr:last-child td { border-bottom: 0; }
+.tabla__titulo { font-weight: 600; font-size: var(--t-base); }
+
+/* <progress>, no un <div><span style="width:…">: el ancho depende de datos
+   del backend, y la regla del proyecto es cero style="" en las páginas. */
+.barra-avance {
+  -webkit-appearance: none; appearance: none;
+  display: block; width: 100%; height: 4px; border: 0;
+  border-radius: 2px; overflow: hidden; margin-top: 5px;
+  background: var(--linea);
+}
+.barra-avance::-webkit-progress-bar { background: var(--linea); border-radius: 2px; }
+.barra-avance::-webkit-progress-value { background: var(--verde); border-radius: 2px; transition: width .5s var(--curva); }
+.barra-avance::-moz-progress-bar { background: var(--verde); border-radius: 2px; }
+
+/* ==================== Vacío ==================== */
+
+.vacio { text-align: center; padding: var(--e-7) var(--e-4); }
+.vacio h2 { font-size: var(--t-md); margin-bottom: var(--e-2); }
+.vacio p { color: var(--apagado); font-size: var(--t-sm); }
+
+/* ==================== Pie ==================== */
+
+.pie {
+  max-width: var(--ancho-panel); margin: 0 auto;
+  padding: var(--e-5); border-top: 1px solid var(--linea);
+  font-size: var(--t-xs); color: var(--apagado);
+  display: flex; justify-content: space-between; gap: var(--e-4); flex-wrap: wrap;
+}
+
+/* ==================== Móvil ==================== */
+
+@media (max-width: 560px) {
+  .contenido { padding: var(--e-4) var(--e-3) var(--e-6); }
+  .encabezado, .progreso, .paso, .hoja__cuerpo { padding-left: var(--e-4); padding-right: var(--e-4); }
+  .encabezado h1 { font-size: 25px; }
+  .token input { width: 29px; height: 46px; font-size: 17px; }
+  .acciones { flex-direction: column-reverse; align-items: stretch; }
+  .acciones .boton { width: 100%; }
+  .barra__interior { padding: var(--e-3) var(--e-4); }
+}
+
+/* Quien activó "reducir movimiento" en su sistema lo hizo por una razón:
+   mareo, migraña o distracción. No es una preferencia estética. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    transition-duration: .01ms !important;
+  }
+  .sello circle, .sello path { stroke-dashoffset: 0; }
+}
+
+/* =====================================================================
+   Componentes de las pantallas del estudiante
+   ===================================================================== */
+
+/* ---------- Encabezado de página ---------- */
+.cabecera-pagina { max-width: var(--ancho-hoja); margin: 0 auto var(--e-5); }
+.cabecera-pagina h1 {
+  font-family: var(--fuente-titulo); font-weight: 600;
+  font-size: var(--t-xl); letter-spacing: -.01em; margin-bottom: var(--e-2);
+}
+.cabecera-pagina p { color: var(--apagado); font-size: var(--t-sm); max-width: var(--linea-texto); }
+
+.enlace-atras {
+  display: inline-flex; align-items: center; gap: 6px;
+  max-width: var(--ancho-hoja); margin: 0 auto var(--e-3);
+  font-size: var(--t-sm); color: var(--apagado); text-decoration: none;
+}
+.enlace-atras:hover { color: var(--tinta); }
+
+/* ---------- Lista de votaciones ---------- */
+.lista {
+  max-width: var(--ancho-hoja); margin: 0 auto;
+  display: flex; flex-direction: column; gap: var(--e-4);
+}
+
+.tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--linea); border-radius: var(--r-hoja);
+  padding: var(--e-5); box-shadow: var(--e-baja);
+  transition: box-shadow var(--normal) ease, transform var(--normal) var(--curva);
+}
+.tarjeta:hover { box-shadow: var(--e-media); transform: translateY(-1px); }
+
+/* Una votación en la que ya no puedes actuar se apaga: sale del blanco,
+   pierde la sombra y deja de reaccionar al cursor. La jerarquía visual
+   dice lo mismo que la insignia. */
+.tarjeta--apagada { background: var(--fondo); box-shadow: none; }
+.tarjeta--apagada:hover { box-shadow: none; transform: none; }
+
+.tarjeta__cabeza {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: var(--e-4); margin-bottom: var(--e-2);
+}
+.tarjeta__titulo { font-family: var(--fuente-titulo); font-size: var(--t-lg); font-weight: 600; }
+.tarjeta__desc { color: var(--apagado); font-size: var(--t-sm); max-width: var(--linea-texto); }
+.tarjeta__pie {
+  display: flex; align-items: center; gap: var(--e-3);
+  flex-wrap: wrap; margin-top: var(--e-4);
+}
+.dato { font-size: var(--t-xs); color: var(--apagado); }
+
+/* ---------- Login ---------- */
+.login {
+  max-width: 880px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--linea); border-radius: var(--r-hoja);
+  box-shadow: var(--e-media); overflow: hidden; min-height: 460px;
+}
+.login__panel {
+  /* Fijo, no var(--tinta): es un panel decorativo de marca (como un
+     afiche), siempre oscuro con texto blanco encima, sin importar el
+     tema de la página. Igual razón que .salto más abajo. */
+  background: #0F172A; color: #fff;
+  padding: var(--e-6); display: flex; flex-direction: column; justify-content: space-between;
+}
+.login__panel h2 {
+  font-family: var(--fuente-titulo); font-size: 26px; font-weight: 600;
+  margin-bottom: var(--e-3);
+}
+.login__panel p { color: rgba(255, 255, 255, .72); font-size: var(--t-sm); }
+.login__lema { font-size: var(--t-md); line-height: 1.45; color: #fff; }
+.login__forma { display: block; margin-bottom: var(--e-5); }
+.login__caja { background: var(--superficie); padding: var(--e-6); display: grid; align-content: center; }
+
+@media (max-width: 720px) {
+  .login { grid-template-columns: 1fr; min-height: 0; }
+  /* El panel decorativo desaparece en móvil. No se encoge: en una pantalla
+     de 5 pulgadas robaría el espacio del formulario, que es lo único que
+     la persona vino a hacer. */
+  .login__panel { display: none; }
+  .login__caja { padding: var(--e-5); }
+}
+
+/* ---------- Dos utilidades, y no más ----------
+   Un botón a ancho completo y un bloque separado del anterior aparecen en
+   casi todas las pantallas. Son clases, no style="", porque en el momento
+   en que se permite el primer estilo incrustado aparecen veinte. */
+.boton--bloque { width: 100%; }
+.espacio-arriba { margin-top: var(--e-4); }
+
+.boton--icono { padding: var(--e-2); min-height: 40px; min-width: 40px; }
+
+/* =====================================================================
+   Componentes del panel de administrador
+   ===================================================================== */
+
+.panel-seccion { font-family: var(--fuente-titulo); font-weight: 600; font-size: var(--t-md); margin-bottom: var(--e-4); }
+
+.panel-cabecera {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: var(--e-4); margin-bottom: var(--e-4); flex-wrap: wrap;
+}
+
+/* Tarjeta ancha del panel: la misma superficie que .hoja, sin el límite de
+   600px que le queda bien a una papeleta pero no a una tabla de 6 columnas. */
+.panel-tarjeta {
+  background: var(--superficie);
+  border: 1px solid var(--linea); border-radius: var(--r-hoja);
+  box-shadow: var(--e-media); padding: var(--e-5);
+  margin-bottom: var(--e-6); overflow-x: auto;
+}
+
+.tabla__acciones { display: flex; gap: var(--e-2); justify-content: flex-end; flex-wrap: wrap; }
+.token-codigo { font-family: var(--fuente-mono); font-size: var(--t-xs); letter-spacing: .06em; }
+
+/* ---------- Resumen del dashboard ---------- */
+.panel-resumen {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--e-4); margin-bottom: var(--e-6);
+}
+.estadistica {
+  background: var(--superficie);
+  border: 1px solid var(--linea); border-radius: var(--r-fila);
+  padding: var(--e-5); box-shadow: var(--e-baja);
+}
+.estadistica__numero { font-family: var(--fuente-titulo); font-size: var(--t-xl); font-weight: 600; }
+.estadistica__etiqueta { font-size: var(--t-sm); color: var(--apagado); margin-top: var(--e-1); }
+
+/* ---------- Fila de opción dinámica (crear votación) ---------- */
+.fila-opcion { display: flex; gap: var(--e-3); align-items: flex-end; margin-bottom: var(--e-3); }
+.fila-opcion .campo { flex: 1; margin-bottom: 0; }
+
+/* ---------- Lista de verificación (generar padrón) ---------- */
+.verificacion-cabecera {
+  display: flex; justify-content: space-between; align-items: center; gap: var(--e-3);
+  padding: var(--e-3) var(--e-4); border-bottom: 1px solid var(--linea);
+  font-size: var(--t-sm); font-weight: 600;
+}
+.verificacion-lista { max-height: 360px; overflow-y: auto; border: 1px solid var(--linea); border-radius: var(--r-fila); }
+.verificacion {
+  display: flex; align-items: center; gap: var(--e-3);
+  padding: var(--e-3) var(--e-4); border-bottom: 1px solid var(--linea); font-size: var(--t-sm);
+}
+.verificacion:last-child { border-bottom: 0; }
+.verificacion input[type="checkbox"] { width: 18px; height: 18px; }
+
+/* ---------- Resultados ---------- */
+.resultado { margin-bottom: var(--e-4); }
+.resultado:last-child { margin-bottom: 0; }
+.resultado__cabeza { display: flex; justify-content: space-between; gap: var(--e-3); font-size: var(--t-sm); margin-bottom: var(--e-2); }
+.resultado__cabeza b { font-weight: 600; }
+.resultado__cabeza span { color: var(--apagado); }
+/* La opción con más votos, resaltada con el mismo verde de acción: el color
+   no es la única señal, el número y el orden ya la distinguen. */
+.resultado--ganadora .barra-avance::-webkit-progress-value,
+.resultado--ganadora .barra-avance::-moz-progress-bar { background: var(--verde-t); }
+.resultado--ganadora .resultado__cabeza b { color: var(--verde-t); }
+
+/* Al imprimir el padrón, nadie necesita la barra de navegación ni el pie. */
+@media print {
+  .barra, .pie, .panel-cabecera, .acciones, .boton--texto { display: none !important; }
+  .contenido--panel { padding: 0; max-width: none; }
+  .panel-tarjeta { box-shadow: none; border: 0; }
+}
+
+@media (max-width: 720px) {
+  .verificacion-cabecera { flex-direction: column; align-items: flex-start; }
+  .fila-opcion { flex-direction: column; align-items: stretch; }
+}
+
+/* =====================================================================
+   Layout del administrador: sidebar + topbar
+   Aparte del navbar del estudiante (.barra): cinco pantallas de gestión
+   piden un menú fijo, no una fila de enlaces.
+   ===================================================================== */
+
+.panel-app { display: grid; grid-template-columns: 240px 1fr; align-items: start; min-height: 100vh; }
+
+.panel-lateral {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  display: flex; flex-direction: column;
+  background: var(--superficie); border-right: 1px solid var(--linea);
+  padding: var(--e-5) var(--e-4);
+}
+
+.panel-lateral__marca {
+  display: flex; align-items: center; gap: var(--e-3);
+  padding: 0 var(--e-2); margin-bottom: var(--e-6);
+  color: var(--verde-t); text-decoration: none;
+}
+.panel-lateral__marca > span { display: flex; flex-direction: column; }
+.panel-lateral__marca b { font-family: var(--fuente-titulo); font-size: var(--t-base); font-weight: 700; color: var(--tinta); }
+.panel-lateral__marca span span { font-size: var(--t-xxs); color: var(--apagado); font-weight: 500; }
+
+.panel-lateral__nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.panel-lateral__enlace {
+  position: relative; display: flex; align-items: center; gap: var(--e-3);
+  padding: var(--e-3); border-radius: var(--r-boton);
+  font-size: var(--t-sm); font-weight: 500; color: var(--apagado); text-decoration: none;
+  transition: background var(--rapido) ease, color var(--rapido) ease;
+}
+.panel-lateral__enlace svg { flex: none; }
+.panel-lateral__enlace:hover { background: var(--fondo); color: var(--tinta); }
+.panel-lateral__enlace[aria-current="page"] { background: var(--verde-suave); color: var(--verde-t); font-weight: 600; }
+.panel-lateral__enlace[aria-current="page"]::before {
+  content: ""; position: absolute; left: calc(-1 * var(--e-4)); top: 7px; bottom: 7px;
+  width: 3px; background: var(--verde-t); border-radius: 0 3px 3px 0;
+}
+
+.panel-lateral__pie { border-top: 1px solid var(--linea); padding-top: var(--e-4); margin-top: var(--e-4); }
+.panel-lateral__perfil { display: flex; align-items: center; gap: var(--e-3); padding: 0 var(--e-2); margin-bottom: var(--e-3); }
+.panel-lateral__quien { display: flex; flex-direction: column; min-width: 0; }
+.panel-lateral__quien b {
+  font-size: var(--t-sm); font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.panel-lateral__quien small { font-size: var(--t-xxs); color: var(--apagado); }
+
+.avatar {
+  flex: none; width: 34px; height: 34px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--verde-suave); color: var(--verde-t);
+  font-size: var(--t-sm); font-weight: 700;
+}
+
+/* Fondo del menú móvil. Sin display:none por defecto en JS: la clase
+   es-visible es la única que lo muestra, así que sin JavaScript nunca
+   aparece un telón que nadie puede cerrar. */
+.panel-lateral__fondo {
+  display: none; position: fixed; inset: 0; z-index: 39;
+  background: rgba(15, 23, 42, .45);
+}
+
+.panel-columna { min-width: 0; display: flex; flex-direction: column; min-height: 100vh; }
+.panel-columna > .contenido { flex: 1; }
+
+.panel-topbar {
+  display: flex; align-items: center; gap: var(--e-3);
+  padding: var(--e-4) var(--e-5);
+  background: var(--superficie); border-bottom: 1px solid var(--linea);
+}
+.panel-topbar__titulo { font-family: var(--fuente-titulo); font-size: var(--t-md); font-weight: 600; }
+.panel-topbar__menu {
+  display: none; background: none; border: 0; padding: var(--e-2);
+  border-radius: var(--r-boton); color: var(--tinta); cursor: pointer;
+}
+.panel-topbar__menu:hover { background: var(--fondo); }
+
+@media (max-width: 1023px) {
+  .panel-app { display: block; }
+  .panel-lateral {
+    position: fixed; top: 0; left: 0; width: 260px; z-index: 40;
+    transform: translateX(-100%);
+    transition: transform var(--lento) var(--curva);
+    box-shadow: var(--e-alta);
+  }
+  .panel-lateral.es-abierto { transform: none; }
+  .panel-lateral__fondo.es-visible { display: block; }
+  .panel-topbar__menu { display: inline-flex; align-items: center; justify-content: center; }
+}
+
+@media (max-width: 560px) {
+  .panel-topbar { padding: var(--e-3) var(--e-4); }
+}
+
+/* Quien activó "reducir movimiento" tampoco necesita el deslizamiento
+   del menú lateral. */
+@media (prefers-reduced-motion: reduce) {
+  .panel-lateral { transition-duration: .01ms; }
+}
+
+html.sin-scroll { overflow: hidden; }
+
+/* =====================================================================
+   Portada pública (index.php)
+   La única página que se ve sin sesión iniciada, aparte de login.php.
+   Por eso no usa includes/cabecera.php: esa barra asume un usuario
+   autenticado (nombre, botón de cerrar sesión).
+   ===================================================================== */
+
+.portada__barra .barra__interior { justify-content: space-between; }
+.portada__acciones { display: flex; align-items: center; gap: var(--e-3); }
+
+.portada__hero {
+  max-width: var(--ancho-panel); margin: 0 auto;
+  padding: var(--e-8) var(--e-4) var(--e-7);
+  text-align: center;
+  /* Un resplandor, no una imagen: se resuelve en CSS, cambia solo con
+     --verde-suave y por eso no hace falta una versión aparte para el
+     modo oscuro (ya es una rgba() ahí). */
+  background: radial-gradient(60% 65% at 50% -10%, var(--verde-suave), transparent 70%);
+}
+.portada__insignia {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px var(--e-3); border-radius: var(--r-pastilla);
+  background: var(--verde-suave); color: var(--verde-t);
+  font-size: var(--t-xs); font-weight: 600; letter-spacing: .02em;
+  margin-bottom: var(--e-4);
+  animation: entra var(--lento) var(--curva) both;
+}
+.portada__hero h1 {
+  font-family: var(--fuente-titulo); font-weight: 600;
+  font-size: 44px; letter-spacing: -.02em; line-height: 1.12;
+  color: var(--tinta); margin-bottom: var(--e-3);
+  animation: entra var(--lento) var(--curva) both; animation-delay: .05s;
+}
+.portada__hero p {
+  color: var(--apagado); font-size: var(--t-md);
+  max-width: 60ch; margin: 0 auto var(--e-6);
+  animation: entra var(--lento) var(--curva) both; animation-delay: .1s;
+}
+.portada__hero .boton {
+  animation: entra var(--lento) var(--curva) both; animation-delay: .15s;
+}
+
+.portada__caracteristicas {
+  max-width: var(--ancho-panel); margin: 0 auto;
+  padding: 0 var(--e-4) var(--e-8);
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--e-4);
+}
+.portada__caracteristicas .tarjeta {
+  border-top: 3px solid var(--verde);
+  animation: entra var(--lento) var(--curva) both;
+}
+.portada__caracteristicas .tarjeta:nth-child(1) { animation-delay: .15s; }
+.portada__caracteristicas .tarjeta:nth-child(2) { animation-delay: .22s; }
+.portada__caracteristicas .tarjeta:nth-child(3) { animation-delay: .29s; }
+.portada__icono {
+  width: 44px; height: 44px; border-radius: var(--r-fila);
+  background: var(--verde-suave); color: var(--verde-t);
+  display: grid; place-items: center; margin-bottom: var(--e-3);
+}
+.portada__icono svg { width: 22px; height: 22px; }
+
+@media (max-width: 720px) {
+  .portada__hero { padding: var(--e-6) var(--e-4); }
+  .portada__hero h1 { font-size: 30px; }
+  .portada__caracteristicas { grid-template-columns: 1fr; padding-bottom: var(--e-6); }
+}

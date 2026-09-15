@@ -1,0 +1,154 @@
+/* =====================================================================
+   SVIS — Tokens, identidad SENA (verde)
+   Variante por defecto. tokens-azul.css es la alternativa: cambiar de
+   identidad completa cuesta un archivo, ni una página, ni una clase,
+   ni una línea de JavaScript.
+   ===================================================================== */
+
+:root {
+
+  /* ---------- Color ----------
+     #39A900 es el verde institucional del SENA, pero sobre blanco da
+     apenas ~2.3:1: sirve para rellenos y marcas, nunca para texto. Por
+     eso existe --verde-t (#2A7D00, ~5.1:1), la variante oscurecida que
+     SÍ pasa AA y es la que llevan botones, enlaces y foco. */
+
+  --tinta:        #0F172A;
+  --verde:        #39A900;   /* rellenos, barras, marcas. NUNCA texto */
+  --verde-t:      #2A7D00;   /* texto/enlaces/bordes en verde sobre el fondo de la página */
+  --verde-boton:  #2A7D00;   /* SOLO relleno de botones: fijo, para que el blanco encima siga pasando AA aunque --verde-t cambie de tono en modo oscuro */
+  --verde-hover:  #1F5E00;
+  --verde-suave:  #EFF9EA;   /* fondo del estado seleccionado */
+  --verde-borde-suave: #9FC79A;
+
+  --exito-t:      #15803D;   /* texto de éxito, 4.8:1 */
+
+  --superficie:   #FFFFFF;
+  --fondo:        #F8FAFC;
+  --linea:        #E2E8F0;
+  --linea-fuerte: #CBD5E1;
+  --apagado:      #475569;
+  --deshabilitado:#94A3B8;
+
+  --ambar:        #B45309;   /* #D97706 da 3.1:1 y no pasa AA en texto */
+  --ambar-suave:  #FFFBEB;
+  --granate:      #DC2626;   /* texto/bordes en granate sobre el fondo de la página */
+  --granate-boton:#DC2626;   /* SOLO relleno de botones, por la misma razón que --verde-boton */
+  --granate-hover:#B91C1C;
+  --granate-suave:#FEF6F6;
+
+  /* ---------- Tipografía ----------
+     Inter en todo. El brief no pide una segunda familia, así que la
+     jerarquía la cargan el peso y el tamaño. */
+
+  --fuente-titulo: 'Inter', system-ui, sans-serif;
+  --fuente-texto:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fuente-mono:   'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+  --t-xl: 32px;
+  --t-lg: 24px;
+  --t-md: 20px;
+  --t-base: 16px;
+  --t-sm: 14px;
+  --t-xs: 13px;
+  --t-xxs: 12px;
+
+  /* ---------- Espaciado (múltiplos de 4) ---------- */
+  --e-1: 4px;
+  --e-2: 8px;
+  --e-3: 12px;
+  --e-4: 16px;
+  --e-5: 24px;
+  --e-6: 32px;
+  --e-7: 48px;
+  --e-8: 64px;
+
+  /* ---------- Radio (8–14px según el brief) ---------- */
+  --r-hoja:  14px;
+  --r-fila:  12px;
+  --r-campo: 8px;
+  --r-boton: 8px;
+  --r-pastilla: 999px;
+
+  /* ---------- Elevación: sombras muy suaves ---------- */
+  --e-baja:  0 1px 2px rgba(15, 23, 42, .05);
+  --e-media: 0 4px 12px rgba(15, 23, 42, .07);
+  --e-alta:  0 20px 48px rgba(15, 23, 42, .16);
+
+  /* ---------- Movimiento: 150–200 ms ---------- */
+  --curva: cubic-bezier(.22, .61, .36, 1);
+  --rapido: .15s;
+  --normal: .2s;
+  --lento: .3s;
+
+  /* ---------- Medidas ---------- */
+  --ancho-hoja:  600px;
+  --ancho-panel: 1080px;
+  --linea-texto: 68ch;
+}
+
+/* =====================================================================
+   Modo oscuro
+   Dos formas de activarlo, la misma paleta: el sistema operativo
+   (prefers-color-scheme) o el botón de la barra (data-tema en <html>,
+   guardado en localStorage por js/app.js). El botón manda: si alguien
+   elige "claro" a mano, se respeta aunque el sistema esté en oscuro.
+
+   Por qué --verde-t/--granate cambian de tono aquí pero --verde-boton/
+   --granate-boton NO: los primeros son texto y bordes sobre el fondo de
+   la página, así que necesitan aclararse para seguir pasando AA sobre un
+   fondo oscuro. Los segundos son el relleno de un botón con texto blanco
+   encima; ese blanco ya pasa AA sobre el tono oscuro y dejaría de pasarlo
+   sobre un verde o granate más claro. Un solo token para los dos usos no
+   puede cumplir ambos contrastes a la vez.
+   ===================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --tinta:        #F1F5F9;
+    --superficie:   #141B2E;
+    --fondo:        #0B1220;
+    --linea:        #263041;
+    --linea-fuerte: #37455C;
+    --apagado:      #94A3B8;
+    --deshabilitado:#64748B;
+
+    --verde-t:      #4ADE80;
+    --verde-suave:  rgba(74, 222, 128, .16);
+    --verde-borde-suave: rgba(74, 222, 128, .4);
+    --exito-t:      #4ADE80;
+
+    --ambar:        #FBBF24;
+    --ambar-suave:  rgba(251, 191, 36, .14);
+    --granate:      #F87171;
+    --granate-suave:rgba(248, 113, 113, .14);
+
+    --e-baja:  0 1px 2px rgba(0, 0, 0, .4);
+    --e-media: 0 4px 16px rgba(0, 0, 0, .5);
+    --e-alta:  0 24px 60px rgba(0, 0, 0, .6);
+  }
+}
+
+:root[data-tema="oscuro"] {
+  --tinta:        #F1F5F9;
+  --superficie:   #141B2E;
+  --fondo:        #0B1220;
+  --linea:        #263041;
+  --linea-fuerte: #37455C;
+  --apagado:      #94A3B8;
+  --deshabilitado:#64748B;
+
+  --verde-t:      #4ADE80;
+  --verde-suave:  rgba(74, 222, 128, .16);
+  --verde-borde-suave: rgba(74, 222, 128, .4);
+  --exito-t:      #4ADE80;
+
+  --ambar:        #FBBF24;
+  --ambar-suave:  rgba(251, 191, 36, .14);
+  --granate:      #F87171;
+  --granate-suave:rgba(248, 113, 113, .14);
+
+  --e-baja:  0 1px 2px rgba(0, 0, 0, .4);
+  --e-media: 0 4px 16px rgba(0, 0, 0, .5);
+  --e-alta:  0 24px 60px rgba(0, 0, 0, .6);
+}

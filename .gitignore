@@ -1,0 +1,19 @@
+# Secretos y configuracion local: cada quien tiene la suya, nunca se sube.
+frontend-php/config.local.php
+backend-java/src/main/resources/db.properties
+
+# Build de Maven
+backend-java/target/
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+nbproject/private/
+
+# Sistema operativo
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log

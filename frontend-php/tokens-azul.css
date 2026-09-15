@@ -1,0 +1,89 @@
+/* =====================================================================
+   SVIS — Tokens, variante AZUL
+   Alternativa a tokens.css. Para probarla, cambia la línea del <link>
+   en includes/cabecera.php. Ninguna otra cosa se toca: ni una página,
+   ni una clase, ni una línea de JavaScript.
+
+   Que un cambio de identidad completo cueste un archivo es el argumento
+   a favor de tener tokens. Vale la pena decirlo en la sustentación.
+   ===================================================================== */
+
+:root {
+
+  /* ---------- Color ----------
+     Una ventaja real de este azul: #2563EB sobre blanco da 5.16:1 y
+     cumple AA para texto, así que no hace falta un segundo tono como
+     con el verde del SENA.
+
+     El verde de éxito tiene el mismo problema que #39A900: #16A34A da
+     3.3:1 y no sirve para texto. Por eso --exito-t existe. */
+
+  --tinta:        #0F172A;
+  --verde:        #16A34A;   /* rellenos, barras, marcas. NUNCA texto */
+  --verde-t:      #2563EB;   /* acción principal: botones, enlaces */
+  --verde-hover:  #1D4ED8;
+  --verde-suave:  #EFF6FF;   /* fondo del estado seleccionado */
+
+  --exito-t:      #15803D;   /* texto verde accesible, 4.8:1 */
+
+  --superficie:   #FFFFFF;
+  --fondo:        #F8FAFC;
+  --linea:        #E2E8F0;
+  --linea-fuerte: #CBD5E1;
+  --apagado:      #475569;
+  --deshabilitado:#94A3B8;
+
+  --ambar:        #B45309;   /* #D97706 da 3.1:1 y no pasa AA en texto */
+  --ambar-suave:  #FFFBEB;
+  --granate:      #DC2626;
+  --granate-hover:#B91C1C;
+
+  /* ---------- Tipografía ----------
+     Inter en todo. El brief no pide una segunda familia, así que la
+     jerarquía la cargan el peso y el tamaño. */
+
+  --fuente-titulo: 'Inter', system-ui, sans-serif;
+  --fuente-texto:  'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --fuente-mono:   'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+  --t-xl: 32px;
+  --t-lg: 24px;
+  --t-md: 20px;
+  --t-base: 16px;
+  --t-sm: 14px;
+  --t-xs: 13px;
+  --t-xxs: 12px;
+
+  /* ---------- Espaciado (múltiplos de 4) ---------- */
+  --e-1: 4px;
+  --e-2: 8px;
+  --e-3: 12px;
+  --e-4: 16px;
+  --e-5: 24px;
+  --e-6: 32px;
+  --e-7: 48px;
+  --e-8: 64px;
+
+  /* ---------- Radio (8–14px según el brief) ---------- */
+  --r-hoja:  14px;
+  --r-fila:  12px;
+  --r-campo: 8px;
+  --r-boton: 8px;
+  --r-pastilla: 999px;
+
+  /* ---------- Elevación: sombras muy suaves ---------- */
+  --e-baja:  0 1px 2px rgba(15, 23, 42, .05);
+  --e-media: 0 4px 12px rgba(15, 23, 42, .07);
+  --e-alta:  0 20px 48px rgba(15, 23, 42, .16);
+
+  /* ---------- Movimiento: 150–200 ms ---------- */
+  --curva: cubic-bezier(.22, .61, .36, 1);
+  --rapido: .15s;
+  --normal: .2s;
+  --lento: .3s;
+
+  /* ---------- Medidas ---------- */
+  --ancho-hoja:  600px;
+  --ancho-panel: 1080px;
+  --linea-texto: 68ch;
+}
