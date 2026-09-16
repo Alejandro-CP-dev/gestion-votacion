@@ -118,7 +118,11 @@ public class JdbcVotoRepository implements VotoRepository {
             // bloqueo, y se deja a proposito: si alguien alguna vez quita el
             // FOR UPDATE, esta linea sigue impidiendo el voto doble. Una
             // defensa que cuesta cero se deja puesta.
-            String sqlQuemar = "UPDATE TokenOtp SET Estado = 'USADO', UsadoEn = ? "
+            // TokenCifrado tambien se borra aqui: una vez quemado el token no
+            // hay razon para seguir guardando una copia recuperable de su
+            // texto plano, y borrarla reduce la ventana en la que una fuga de
+            // la base de datos mas la llave de cifrado significarian algo.
+            String sqlQuemar = "UPDATE TokenOtp SET Estado = 'USADO', UsadoEn = ?, TokenCifrado = NULL "
                     + "WHERE Id = ? AND Estado = 'DISPONIBLE'";
 
             try (PreparedStatement ps = conn.prepareStatement(sqlQuemar)) {

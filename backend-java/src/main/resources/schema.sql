@@ -100,9 +100,18 @@ CREATE TABLE TokenOtp (
     Id              BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     EncuestaId      INT UNSIGNED NOT NULL,
     UsuarioId       INT UNSIGNED NOT NULL,
-    -- SHA-256 en hexadecimal del token. El token en claro se le entrega
-    -- al estudiante una sola vez y jamas se persiste.
+    -- SHA-256 en hexadecimal del token. Es la UNICA columna que se usa para
+    -- validar un voto (indice unico + FOR UPDATE en VotoRepository); un hash
+    -- no se puede revertir, asi que por si sola nunca alcanza para reconstruir
+    -- el codigo.
     TokenHash       CHAR(64) NOT NULL,
+    -- Copia cifrada (AES-256-GCM, llave fuera de la base de datos, ver
+    -- TokenCifradoUtil) del mismo token en claro. Existe solo para que el
+    -- panel del aprendiz pueda mostrarle DE NUEVO el token que el
+    -- administrador ya le asigno en el padron, sin tener que repartirlo por
+    -- otro medio. Se borra en cuanto el token se quema (VotoRepository), asi
+    -- que un token ya usado no deja copia recuperable.
+    TokenCifrado    VARCHAR(255) NULL,
     Estado          ENUM('DISPONIBLE', 'USADO') NOT NULL DEFAULT 'DISPONIBLE',
     FechaExpiracion DATETIME NOT NULL,
     UsadoEn         DATETIME NULL,

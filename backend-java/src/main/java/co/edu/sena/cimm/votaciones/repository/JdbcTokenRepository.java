@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -24,8 +25,8 @@ public class JdbcTokenRepository implements TokenRepository {
     public int guardarPadron(List<TokenOtp> tokens) {
 
         String sql = "INSERT INTO TokenOtp "
-                + "(EncuestaId, UsuarioId, TokenHash, Estado, FechaExpiracion) "
-                + "VALUES (?, ?, ?, ?, ?)";
+                + "(EncuestaId, UsuarioId, TokenHash, TokenCifrado, Estado, FechaExpiracion) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
 
         Connection cn = null;
         try {
@@ -39,8 +40,9 @@ public class JdbcTokenRepository implements TokenRepository {
                     ps.setInt(1, t.getEncuestaId());
                     ps.setInt(2, t.getUsuarioId());
                     ps.setString(3, t.getTokenHash());
-                    ps.setString(4, t.getEstado().name());
-                    ps.setTimestamp(5, Timestamp.valueOf(t.getFechaExpiracion()));
+                    ps.setString(4, t.getTokenCifrado());
+                    ps.setString(5, t.getEstado().name());
+                    ps.setTimestamp(6, Timestamp.valueOf(t.getFechaExpiracion()));
                     ps.addBatch();
                 }
 
@@ -99,6 +101,27 @@ public class JdbcTokenRepository implements TokenRepository {
         return existe("SELECT 1 FROM TokenOtp "
                 + "WHERE EncuestaId = ? AND UsuarioId = ? AND Estado = 'USADO'",
                 encuestaId, usuarioId);
+    }
+
+    @Override
+    public Optional<String> obtenerTokenCifrado(int encuestaId, int usuarioId) {
+        String sql = "SELECT TokenCifrado FROM TokenOtp "
+                + "WHERE EncuestaId = ? AND UsuarioId = ? AND Estado = 'DISPONIBLE' "
+                + "AND FechaExpiracion > NOW() AND TokenCifrado IS NOT NULL";
+
+        try (Connection cn = Database.getConnection();
+             PreparedStatement ps = cn.prepareStatement(sql)) {
+
+            ps.setInt(1, encuestaId);
+            ps.setInt(2, usuarioId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next() ? Optional.of(rs.getString(1)) : Optional.empty();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al recuperar el token cifrado", e);
+        }
     }
 
     // ==================== apoyo ====================

@@ -5,7 +5,8 @@
 # db.properties NO se sube a git: cada integrante del equipo tiene el suyo.
 #
 # Las variables de entorno tienen PRIORIDAD sobre estos valores:
-#   SVIS_DB_URL   SVIS_DB_USER   SVIS_DB_PASSWORD   SVIS_DB_POOL   SVIS_API_KEY
+#   SVIS_DB_URL   SVIS_DB_USER   SVIS_DB_PASSWORD   SVIS_DB_POOL
+#   SVIS_API_KEY   SVIS_TOKEN_KEY
 #
 # Asi cada integrante del equipo usa su propia clave de MySQL sin editar
 # este archivo, y sin que la clave de nadie termine en el repositorio.
@@ -20,3 +21,9 @@ db.poolSize=10
 # la constante API_KEY de frontend-php/config.local.php. Genera la tuya, por
 # ejemplo: openssl rand -base64 24
 api.key=CAMBIA_ESTO_POR_UNA_CLAVE_ALEATORIA
+
+# Llave AES-256 (32 bytes en Base64) con la que TokenCifradoUtil cifra el
+# token de cada estudiante antes de guardarlo, para poder mostrarselo de
+# nuevo en su panel. Genera la tuya, por ejemplo:
+#   openssl rand -base64 32
+token.key=CAMBIA_ESTO_POR_32_BYTES_ALEATORIOS_EN_BASE64

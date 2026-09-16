@@ -18,11 +18,13 @@ import co.edu.sena.cimm.votaciones.model.Usuario;
 import co.edu.sena.cimm.votaciones.repository.EncuestaRepository;
 import co.edu.sena.cimm.votaciones.repository.TokenRepository;
 import co.edu.sena.cimm.votaciones.repository.UsuarioRepository;
+import co.edu.sena.cimm.votaciones.util.TokenCifradoUtil;
 import co.edu.sena.cimm.votaciones.util.TokenUtil;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Generacion del padron electoral: un token unico por estudiante y encuesta.
@@ -90,6 +92,7 @@ public class TokenService {
             t.setEncuestaId(encuesta.getId());
             t.setUsuarioId(votante.getId());
             t.setTokenHash(TokenUtil.hashDeToken(tokenEnClaro));
+            t.setTokenCifrado(TokenCifradoUtil.cifrar(tokenEnClaro));
             t.setEstado(EstadoToken.DISPONIBLE);
             t.setFechaExpiracion(expiracion);
             paraGuardar.add(t);
@@ -151,6 +154,7 @@ public class TokenService {
         t.setEncuestaId(peticion.encuestaId);
         t.setUsuarioId(peticion.usuarioId);
         t.setTokenHash(TokenUtil.hashDeToken(tokenEnClaro));
+        t.setTokenCifrado(TokenCifradoUtil.cifrar(tokenEnClaro));
         t.setEstado(EstadoToken.DISPONIBLE);
         t.setFechaExpiracion(LocalDateTime.now().plusHours(HORAS_POR_DEFECTO));
 
@@ -159,6 +163,28 @@ public class TokenService {
         tokenRepo.guardarPadron(Collections.singletonList(t));
 
         return new TokenPropioView(tokenEnClaro);
+    }
+
+    /**
+     * El token que el aprendiz ya tiene asignado (del padron del
+     * administrador o de su propio generarTokenPropio), para mostrarselo de
+     * nuevo en su panel al elegir la encuesta.
+     *
+     * No genera nada nuevo: si no hay un token DISPONIBLE (nunca tuvo, ya
+     * voto o expiro), NoEncontradoException. votar.php/papeleta.php ya saben
+     * distinguir esos casos con /tokens/estado antes de llamar aqui.
+     */
+    public TokenPropioView obtenerMiToken(int encuestaId, int usuarioId) {
+        if (encuestaId <= 0 || usuarioId <= 0) {
+            throw new NegocioException("encuestaId y usuarioId son obligatorios");
+        }
+
+        Optional<String> cifrado = tokenRepo.obtenerTokenCifrado(encuestaId, usuarioId);
+
+        String tokenCifrado = cifrado.orElseThrow(
+                () -> new NoEncontradoException("No tienes un token disponible para esta votacion"));
+
+        return new TokenPropioView(TokenCifradoUtil.descifrar(tokenCifrado));
     }
 
     public EstadoVotanteView consultarEstado(int encuestaId, int usuarioId) {

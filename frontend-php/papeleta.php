@@ -64,6 +64,26 @@ if (ApiClient::ok($est)) {
     $tieneToken = !empty($est['cuerpo']['tieneToken']);
 }
 
+/**
+ * Si el administrador ya generó el padrón con el token de esta persona (o
+ * ella ya lo había generado antes), se lo mostramos aquí mismo: no tiene por
+ * qué haberlo recibido en papel para poder votar. Es la misma respuesta que
+ * antes solo veía el administrador en el momento de generar el padrón, ahora
+ * descifrada bajo demanda para el dueño del token.
+ *
+ * Si no llega nada (expiró, por ejemplo) simplemente no se muestra: no es un
+ * error, tieneToken ya dice que la persona está habilitada.
+ */
+$miToken = null;
+if ($tieneToken) {
+    $rt = ApiClient::get('/tokens/mio',
+        ['encuestaId' => $id, 'usuarioId' => $usuario['id']], true);
+
+    if (ApiClient::ok($rt)) {
+        $miToken = $rt['cuerpo']['token'] ?? null;
+    }
+}
+
 /* ---------- Emisión ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     validarCsrf();
@@ -143,7 +163,33 @@ require __DIR__ . '/includes/cabecera.php';
       <?php endforeach; ?>
     </fieldset>
 
-    <?php if (!$tieneToken): ?>
+    <?php if ($tieneToken && $miToken): ?>
+    <!-- ===== Ver mi token =====
+         El administrador ya generó el token de esta persona en el padrón.
+         Queda oculto detrás de <details>: es un widget nativo del navegador
+         (se puede abrir sin nada de JavaScript), así que no hace falta
+         replicar en app.js lo que el propio HTML ya sabe hacer. La razón de
+         no mostrarlo directo es que la pantalla puede estar siendo mirada
+         por alguien más; que cada quien decida cuándo revelarlo. -->
+    <div class="campo espacio-arriba">
+      <div class="campo__rotulo">
+        <label>Tu token</label>
+        <span>Asignado para esta votación</span>
+      </div>
+
+      <details class="detalle-token">
+        <summary class="boton boton--plano">Ver mi token</summary>
+        <div class="codigo espacio-arriba" data-resultado-token>
+          <code id="miTokenAsignado"><?= e($miToken) ?></code>
+          <button class="copiar" type="button" data-copiar="miTokenAsignado">Copiar</button>
+        </div>
+      </details>
+
+      <p class="pista">
+        Cópialo y pégalo abajo para emitir tu voto. Solo puede usarse una vez.
+      </p>
+    </div>
+    <?php elseif (!$tieneToken): ?>
     <!-- ===== Generar mi token =====
          Solo aparece si la persona todavia no tiene uno para esta votacion.
          Con JS, queda oculto hasta que se elige una opcion (ver app.js);
