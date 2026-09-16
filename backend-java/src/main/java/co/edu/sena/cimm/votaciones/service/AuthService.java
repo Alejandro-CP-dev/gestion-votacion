@@ -6,8 +6,8 @@ import co.edu.sena.cimm.votaciones.dto.UsuarioView;
 import co.edu.sena.cimm.votaciones.model.EstadoUsuario;
 import co.edu.sena.cimm.votaciones.model.Usuario;
 import co.edu.sena.cimm.votaciones.repository.UsuarioRepository;
+import co.edu.sena.cimm.votaciones.util.ClaveUtil;
 import java.util.Optional;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * Reglas de negocio de la autenticacion.
@@ -55,28 +55,8 @@ public class AuthService {
     }
     
     
-    /**
-     * Verifica la clave contra el hash BCrypt guardado.
-     *
-     * BCrypt vuelve a hashear la clave usando la sal que viene incrustada en el
-     * propio hash y compara. Por eso nunca se hashea la clave por separado para
-     * luego compararla con "equals": cada hash de BCrypt lleva su propia sal y
-     * dos hashes de la misma clave son distintos entre si.
-     *
-     * Lo del prefijo: PHP con password_hash() genera hashes "$2y$...", Java con
-     * jBCrypt genera "$2a$...". Es el mismo algoritmo; el prefijo 2y solo marca
-     * una correccion de 2011 en la implementacion en C. Normalizarlo evita
-     * perder una tarde si algun usuario queda creado desde PHP.
-     */
     private boolean claveCoincide(String claveEnTextoPlano, String hashGuardado) {
-        if (hashGuardado == null || hashGuardado.length() < 4) {
-            return false;
-        }
-        String hash = hashGuardado.startsWith("$2y$")
-                ? "$2a$" + hashGuardado.substring(4)
-                : hashGuardado;
- 
-        return BCrypt.checkpw(claveEnTextoPlano, hash);
+        return ClaveUtil.coincide(claveEnTextoPlano, hashGuardado);
     }
     
     

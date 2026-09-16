@@ -719,6 +719,7 @@ legend { font-size: var(--t-base); font-weight: 600; padding: 0 0 var(--e-3); }
 
 .panel-lateral__pie { border-top: 1px solid var(--linea); padding-top: var(--e-4); margin-top: var(--e-4); }
 .panel-lateral__perfil { display: flex; align-items: center; gap: var(--e-3); padding: 0 var(--e-2); margin-bottom: var(--e-3); }
+.panel-lateral__perfil a { text-decoration: none; color: inherit; }
 .panel-lateral__quien { display: flex; flex-direction: column; min-width: 0; }
 .panel-lateral__quien b {
   font-size: var(--t-sm); font-weight: 600;
