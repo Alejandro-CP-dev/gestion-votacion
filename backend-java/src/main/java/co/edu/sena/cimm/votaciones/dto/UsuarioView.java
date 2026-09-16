@@ -1,7 +1,10 @@
 package co.edu.sena.cimm.votaciones.dto;
 
+import co.edu.sena.cimm.votaciones.model.EstadoUsuario;
 import co.edu.sena.cimm.votaciones.model.RolUsuario;
 import co.edu.sena.cimm.votaciones.model.Usuario;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * El perfil que se devuelve tras un login exitoso. Es lo que el frontend
@@ -24,22 +27,36 @@ public class UsuarioView {
     public String nombre;
     public String apellido;
     public String correo;
+    public String telefono;
     public RolUsuario rol;
+    public EstadoUsuario estado;
 
-    public UsuarioView(int id, String nombre, String apellido, String correo, RolUsuario rol) {
+    public UsuarioView(int id, String nombre, String apellido, String correo,
+            String telefono, RolUsuario rol, EstadoUsuario estado) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
         this.correo = correo;
+        this.telefono = telefono;
         this.rol = rol;
+        this.estado = estado;
     }
-    
+
     /**
      * Traduce del modelo al DTO. Vive aqui y no en el servicio para que la
      * conversion este en un solo lugar: si manana se agrega un campo, se
      * agrega aqui y aparece en todos los endpoints que devuelven un perfil.
      */
     public static UsuarioView desde(Usuario u) {
-        return new UsuarioView(u.getId(), u.getNombre(), u.getApellido(), u.getCorreo(), u.getRol());
+        return new UsuarioView(u.getId(), u.getNombre(), u.getApellido(), u.getCorreo(),
+                u.getTelefono(), u.getRol(), u.getEstado());
+    }
+
+    public static List<UsuarioView> desde(List<Usuario> usuarios) {
+        List<UsuarioView> vista = new ArrayList<>();
+        for (Usuario u : usuarios) {
+            vista.add(desde(u));
+        }
+        return vista;
     }
 }

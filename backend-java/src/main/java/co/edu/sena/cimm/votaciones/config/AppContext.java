@@ -11,6 +11,7 @@ import co.edu.sena.cimm.votaciones.repository.VotoRepository;
 import co.edu.sena.cimm.votaciones.service.AuthService;
 import co.edu.sena.cimm.votaciones.service.EncuestaService;
 import co.edu.sena.cimm.votaciones.service.TokenService;
+import co.edu.sena.cimm.votaciones.service.UsuarioService;
 import co.edu.sena.cimm.votaciones.service.VotoService;
 
 /**
@@ -44,6 +45,7 @@ public final class AppContext {
     private static final EncuestaService ENCUESTA_SERVICE = new EncuestaService(ENCUESTA_REPOSITORY, USUARIO_REPOSITORY, TOKEN_REPOSITORY);
     private static final TokenService TOKEN_SERVICE = new TokenService(TOKEN_REPOSITORY, ENCUESTA_REPOSITORY, USUARIO_REPOSITORY);
     private static final VotoService VOTO_SERVICE = new VotoService(VOTO_REPOSITORY);
+    private static final UsuarioService USUARIO_SERVICE = new UsuarioService(USUARIO_REPOSITORY);
 
     private AppContext() {
     }
@@ -66,6 +68,10 @@ public final class AppContext {
 
     public static UsuarioRepository getUsuarioRepository() {
         return USUARIO_REPOSITORY;
+    }
+
+    public static UsuarioService getUsuarioService() {
+        return USUARIO_SERVICE;
     }
 
     public static EncuestaRepository getEncuestaRepository() {

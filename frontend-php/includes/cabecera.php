@@ -97,15 +97,23 @@ $avisoHtml = $avisoActual ? '
         </svg>
         Resultados
       </a>
+      <a class="panel-lateral__enlace" href="<?= BASE_URL ?>/admin/usuarios.php"
+         <?= $paginaActual === 'usuarios' ? 'aria-current="page"' : '' ?>>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"/>
+          <path d="M16 8a3 3 0 100-6M21 20c0-2.8-1.8-5.1-4.3-5.8" stroke-linecap="round"/>
+        </svg>
+        Usuarios
+      </a>
     </nav>
 
     <div class="panel-lateral__pie">
       <div class="panel-lateral__perfil">
-        <span class="avatar" aria-hidden="true"><?= e(mb_strtoupper(mb_substr($usuarioActual['nombre'] ?? $usuarioActual['correo'] ?? '?', 0, 1))) ?></span>
-        <span class="panel-lateral__quien">
+        <a class="avatar" aria-label="Mi perfil" href="<?= BASE_URL ?>/perfil.php"><?= e(mb_strtoupper(mb_substr($usuarioActual['nombre'] ?? $usuarioActual['correo'] ?? '?', 0, 1))) ?></a>
+        <a class="panel-lateral__quien" href="<?= BASE_URL ?>/perfil.php">
           <b><?= e($usuarioActual['nombre'] ?? $usuarioActual['correo'] ?? '') ?></b>
-          <small>Administrador</small>
-        </span>
+          <small>Administrador · Mi perfil</small>
+        </a>
         <?= boton_tema() ?>
       </div>
       <form method="post" action="<?= BASE_URL ?>/logout.php">
@@ -146,6 +154,7 @@ $avisoHtml = $avisoActual ? '
     <?php if (haySesion()): ?>
       <nav class="barra__nav" aria-label="Principal">
         <a href="<?= BASE_URL ?>/votar.php" <?= $paginaActual === 'votar' ? 'aria-current="page"' : '' ?>>Mis votaciones</a>
+        <a href="<?= BASE_URL ?>/perfil.php" <?= $paginaActual === 'perfil' ? 'aria-current="page"' : '' ?>>Mi perfil</a>
       </nav>
 
       <span class="sesion"><?= e($usuarioActual['nombre'] ?? $usuarioActual['correo'] ?? '') ?></span>
