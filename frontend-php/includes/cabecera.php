@@ -32,8 +32,8 @@ $avisoHtml = $avisoActual ? '
      de app.js (que carga al final del body), habría un parpadeo de claro
      a oscuro en cada carga para quien ya eligió oscuro. -->
 <script>(function(){try{var t=localStorage.getItem('svis-tema');if(t)document.documentElement.setAttribute('data-tema',t);}catch(e){}})();</script>
-<link rel="stylesheet" href="<?= BASE_URL ?>/tokens.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/estilos.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/accest/css/tokens.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/accest/css/estilos.css">
 </head>
 <body>
 <a class="salto" href="#contenido">Ir al contenido</a>

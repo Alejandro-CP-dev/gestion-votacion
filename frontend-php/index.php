@@ -22,8 +22,8 @@ $aviso = tomarAviso();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SVIS — Votaciones institucionales</title>
 <script>(function(){try{var t=localStorage.getItem('svis-tema');if(t)document.documentElement.setAttribute('data-tema',t);}catch(e){}})();</script>
-<link rel="stylesheet" href="<?= BASE_URL ?>/tokens.css">
-<link rel="stylesheet" href="<?= BASE_URL ?>/estilos.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/accest/css/tokens.css">
+<link rel="stylesheet" href="<?= BASE_URL ?>/accest/css/estilos.css">
 </head>
 <body>
 <a class="salto" href="#contenido">Ir al contenido</a>
