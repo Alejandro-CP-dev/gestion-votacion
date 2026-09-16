@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  *   POST /api/tokens/generar          [ADMIN] genera un token por estudiante activo
  *   POST /api/tokens/generar-propio   [ESTUDIANTE] el propio estudiante pide su token
  *   GET  /api/tokens/estado           [ADMIN] si un usuario tiene token y si ya voto
+ *   GET  /api/tokens/mio              [ESTUDIANTE] el token (en claro) ya asignado al estudiante
  *
  * Las tres exigen X-Svis-Key: no estan en la lista de rutas publicas de
  * ApiKeyFilter. Eso no bloquea al estudiante: quien llama es siempre el
@@ -64,16 +65,26 @@ public class TokenServlet extends BaseApiServlet{
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         try {
-            if (!"estado".equals(rutaExtra(req))) {
+            String ruta = rutaExtra(req);
+
+            if (!"estado".equals(ruta) && !"mio".equals(ruta)) {
                 escribirJson(resp, 404, new ApiError("NO_ENCONTRADO", "La ruta no existe"));
                 return;
             }
- 
+
             int encuestaId = aEntero(req.getParameter("encuestaId"), "encuestaId");
             int usuarioId = aEntero(req.getParameter("usuarioId"), "usuarioId");
- 
+
+            if ("mio".equals(ruta)) {
+                // Igual que en el POST: esta respuesta lleva el token en claro.
+                resp.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+                resp.setHeader("Pragma", "no-cache");
+                escribirJson(resp, 200, tokenService.obtenerMiToken(encuestaId, usuarioId));
+                return;
+            }
+
             escribirJson(resp, 200, tokenService.consultarEstado(encuestaId, usuarioId));
- 
+
         } catch (Exception ex) {
             responderError(resp, ex);
         }

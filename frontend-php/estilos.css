@@ -408,6 +408,14 @@ legend { font-size: var(--t-base); font-weight: 600; padding: 0 0 var(--e-3); }
 }
 @keyframes traza { to { stroke-dashoffset: 0; } }
 
+/* <details> nativo: display:inline-flex en .boton ya le quita a <summary> su
+   comportamiento de lista, pero Chrome/Safari igual dibujan su propio
+   triangulo (::-webkit-details-marker) encima del boton si no se lo pide
+   explicitamente que no lo haga. */
+.detalle-token summary { list-style: none; }
+.detalle-token summary::-webkit-details-marker { display: none; }
+.detalle-token[open] summary { margin-bottom: var(--e-2); }
+
 .codigo[hidden] { display: none; }
 .codigo {
   display: flex; gap: var(--e-3); align-items: center; justify-content: space-between;

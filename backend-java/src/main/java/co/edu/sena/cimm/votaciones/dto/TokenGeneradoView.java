@@ -3,15 +3,12 @@ package co.edu.sena.cimm.votaciones.dto;
 /**
  * Un token recien generado, con el codigo EN CLARO.
  *
- * Este es el unico objeto del proyecto que lleva un token legible, y existe
- * durante una sola respuesta HTTP. Despues de eso el codigo original no esta
- * en ninguna parte: la base de datos solo guarda su SHA-256, que no se puede
- * revertir.
- *
- * Consecuencia practica que el administrador debe entender: si pierde esta
- * lista, no hay forma de recuperarla. Se anula el padron y se genera otro.
- * Eso no es un defecto, es la propiedad que hace que una filtracion de la base
- * de datos no le permita a nadie votar en nombre de otro.
+ * Esta ya no es la unica forma de ver el codigo en claro: TokenPropioView,
+ * devuelto por GET /api/tokens/mio, tambien lo entrega, descifrando la copia
+ * que TokenCifradoUtil guarda en TokenOtp.TokenCifrado. Este objeto sigue
+ * existiendo aparte porque el administrador necesita el lote completo (con
+ * nombre y correo, para imprimir volantes) en una sola respuesta, no
+ * consultar estudiante por estudiante.
  */
 public class TokenGeneradoView {
     

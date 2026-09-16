@@ -16,6 +16,7 @@ public class TokenOtp {
     private int EncuestaId;
     private int UsuarioId;
     private String TokenHash;
+    private String TokenCifrado;
     private EstadoToken Estado;
     private LocalDateTime fechaExpiracion;
     private LocalDateTime UsadoEn;
@@ -63,6 +64,14 @@ public class TokenOtp {
 
     public void setTokenHash(String TokenHash) {
         this.TokenHash = TokenHash;
+    }
+
+    public String getTokenCifrado() {
+        return TokenCifrado;
+    }
+
+    public void setTokenCifrado(String TokenCifrado) {
+        this.TokenCifrado = TokenCifrado;
     }
 
     public EstadoToken getEstado() {

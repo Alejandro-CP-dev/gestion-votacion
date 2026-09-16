@@ -2,6 +2,7 @@ package co.edu.sena.cimm.votaciones.repository;
 
 import co.edu.sena.cimm.votaciones.model.TokenOtp;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Acceso a la tabla TokenOtp para la generacion del padron.
@@ -52,4 +53,14 @@ public interface TokenRepository {
      * para mostrar la encuesta bloqueada.
      */
     boolean usuarioYaVoto(int encuestaId, int usuarioId);
+
+    /**
+     * El token cifrado (ver TokenCifradoUtil) de un usuario en una encuesta,
+     * para que su panel pueda mostrarselo de nuevo.
+     *
+     * Vacio si el usuario nunca tuvo token, si ya voto (el voto lo borra) o
+     * si expiro: en ninguno de esos casos hay nada que mostrar. El servicio
+     * es quien decide que mensaje dar en cada caso.
+     */
+    Optional<String> obtenerTokenCifrado(int encuestaId, int usuarioId);
 }
